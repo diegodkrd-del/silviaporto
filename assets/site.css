@@ -1,0 +1,186 @@
+
+/* Home da Silvia — parede de galeria (grafite quente) para as obras; linho claro para leitura.
+Tudo limitado a .sp-home para não mexer no resto do site. */
+html:has(.sp-home){scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html:has(.sp-home){scroll-behavior:auto}}
+body:has(.sp-home){background:#1E5E4B}
+body:has(.sp-home) .site-content{display:block!important;padding:0!important;margin:0!important;max-width:none!important;width:100%!important}
+body:has(.sp-home) .inside-article,body:has(.sp-home) .content-area,body:has(.sp-home) .site-main,body:has(.sp-home) .entry-content{padding:0!important;margin:0!important;background:transparent!important;max-width:none!important;width:100%!important;float:none!important;flex:none!important}
+body:has(.sp-home) .is-right-sidebar,body:has(.sp-home) .is-left-sidebar{display:none!important}
+body:has(.sp-home) .entry-header,body:has(.sp-home) .page-header{display:none!important}
+body:has(.sp-home) .grid-container{max-width:none!important}
+.sp-home{--parede:#1E5E4B;--parede-2:#246852;--parede-3:#2B735C;--linho:#F5F2E6;--linho-2:#E4EEE7;--tinta-clara:#F4EFD0;--tinta-escura:#2a241e;--suave-claro:#CFE3D6;--suave-escuro:#6e6458;--ouro:#E8CA88;--ouro-escuro:#9d7124;--titulo:"Bodoni Moda",Georgia,serif;--corpo:"Figtree",system-ui,sans-serif;
+width:100%;margin:0;overflow-x:clip;background:var(--parede);color:var(--tinta-clara);font:17px/1.6 var(--corpo)}
+.sp-home *{box-sizing:border-box}
+@media (max-width:860px){.sp-home{font-size:18px}} /* letra maior no celular */
+.sp-home img{max-width:100%;display:block}
+.sp-home a{color:inherit}
+.sp-home .wrap{max-width:1180px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+.sp-home h1,.sp-home h2,.sp-home h3{font-family:var(--titulo);font-weight:500;line-height:1.1;margin:0;text-wrap:balance;color:inherit}
+.sp-home h2{font-size:clamp(2em,4.5vw,3em)}
+.sp-home p{margin:0 0 12px}
+.sp-home .rotulo{font-size:.78em;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro)}
+.sp-home .btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:12px 22px;font:600 .95em var(--corpo);text-decoration:none;border:1px solid transparent;cursor:pointer;line-height:1.2}
+.sp-home .btn-ouro{background:var(--ouro);color:#1b160f}
+.sp-home .btn-linha{border-color:currentColor;background:transparent;color:inherit}
+.sp-home .btn:focus-visible,.sp-home button:focus-visible,.sp-home a:focus-visible{outline:3px solid var(--ouro);outline-offset:3px}
+.sp-home .topo{position:sticky;top:var(--wp-admin--admin-bar--height,0px);z-index:50;background:rgba(30,94,75,.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.06)}
+.sp-home .topo .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:12px;padding-bottom:12px;position:relative}
+.sp-home .marca{font:500 1.35em var(--titulo);font-variation-settings:"opsz" 6;text-decoration:none;white-space:nowrap}
+.sp-home .marca em{color:var(--ouro);font-style:italic}
+.sp-home .menu{display:flex;gap:18px;flex-wrap:wrap;font-size:.92em}
+.sp-home .menu a{text-decoration:none;color:var(--suave-claro)}
+.sp-home .menu a:hover{color:var(--tinta-clara)}
+.sp-home .menu-bt{display:none;background:none;border:1px solid rgba(255,255,255,.2);color:inherit;border-radius:10px;padding:8px 12px;font:inherit}
+@media (max-width:860px){.sp-home .menu{display:none;position:absolute;left:0;right:0;top:100%;background:var(--parede);flex-direction:column;gap:0;padding:8px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08)}.sp-home .menu.aberto{display:flex}.sp-home .menu a{padding:10px 0;font-size:1.05em}.sp-home .menu-bt{display:block}}
+.sp-home .info-topo{font-size:.82em;color:var(--suave-claro);background:#174A3B}
+.sp-home .info-topo .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px}
+.sp-home .capa{position:relative;padding:40px 0 56px;overflow:hidden;background:radial-gradient(ellipse 70% 60% at 62% 42%,#329578 0%,var(--parede) 72%)}
+.sp-home .capa .wrap{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:center}
+@media (max-width:860px){.sp-home .capa .wrap{grid-template-columns:1fr;gap:24px}}
+.sp-home .capa h1{font-size:clamp(2.6em,6.5vw,4.6em);font-variation-settings:"opsz" 6}
+.sp-home .capa h1 em{color:var(--ouro);font-style:italic}
+.sp-home .capa p.lead{font-size:1.12em;color:var(--suave-claro);max-width:34ch;margin:14px 0 22px}
+.sp-home .acoes{display:flex;gap:12px;flex-wrap:wrap}
+.sp-home .palco{position:relative;aspect-ratio:4/3}
+.sp-home .quadro{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 1.2s ease}
+.sp-home .quadro.on{opacity:1}
+.sp-home .quadro img{max-height:100%;width:auto;object-fit:contain;box-shadow:0 30px 60px -20px rgba(0,0,0,.75),0 0 0 6px #12392E,0 0 0 7px #4F8F78}
+.sp-home .legenda{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;font-size:.88em;color:var(--suave-claro)}
+.sp-home .pontos{display:flex;gap:8px}
+.sp-home .pontos button{width:9px;height:9px;border-radius:50%;border:0;background:#6FA592;padding:0;cursor:pointer}
+.sp-home .pontos button.on{background:var(--ouro)}
+.sp-home section{padding:72px 0;scroll-margin-top:calc(66px + var(--wp-admin--admin-bar--height,0px))}
+.sp-home .claro{background:var(--linho);color:var(--tinta-escura)}
+.sp-home .claro .rotulo{color:var(--ouro-escuro)}
+.sp-home .claro p{color:#4a4238}
+.sp-home .cabeca{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:28px}
+.sp-home .cabeca p{max-width:52ch;margin:10px 0 0}
+.sp-home .duas{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+@media (max-width:860px){.sp-home .duas{grid-template-columns:1fr;gap:28px}}
+.sp-home blockquote{font:italic 500 clamp(1.4em,3vw,2em)/1.3 var(--titulo);margin:0 0 18px;color:var(--tinta-escura);border:0;padding:0}
+.sp-home .filtros{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.sp-home .filtros button{border:1px solid #6FA592;background:transparent;color:var(--suave-claro);border-radius:999px;padding:7px 14px;font:inherit;font-size:.9em;cursor:pointer}
+.sp-home .filtros button.on{background:var(--tinta-clara);border-color:var(--tinta-clara);color:#1b160f}
+.sp-home .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(170px,100%),1fr));gap:18px 14px}
+.sp-home .obra{background:none;border:0;padding:0;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.sp-home .obra .moldura{aspect-ratio:1;background:var(--parede-2);display:flex;align-items:center;justify-content:center;padding:10px;transition:background .25s}
+.sp-home .obra:hover .moldura{background:var(--parede-3)}
+.sp-home .foto-num .num{position:absolute;right:6px;bottom:6px;background:rgba(0,0,0,.45);color:#fff;font:400 11px/1 var(--corpo);padding:3px 5px;border-radius:4px;pointer-events:none}
+.sp-home .nota-num{color:var(--suave-claro);font-size:.92em;margin:6px 0 0}
+.sp-home .foto-num{position:relative;display:block;min-width:0}
+.sp-home .obra img{max-height:100%;object-fit:contain;box-shadow:0 10px 22px -10px rgba(0,0,0,.8)}
+.sp-home .obra span{display:block;font-size:.88em;margin-top:8px;color:var(--suave-claro)}
+.sp-home .mais{margin-top:24px;text-align:center}
+.sp-home .oculto,.sp-caixa.oculto{display:none!important}
+.sp-caixa{position:fixed;inset:0;z-index:100000;background:rgba(13,42,34,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px;color:#f2ebe0}
+.sp-caixa img{max-width:100%;max-height:70vh;object-fit:contain}
+.sp-caixa h3{font:500 1.4em "Bodoni Moda",Georgia,serif;text-align:center;margin:0;color:#f2ebe0}
+.sp-home #parede{padding-top:48px}
+.sp-home .ferramenta{border-radius:14px;overflow:hidden;background:#fff;height:calc(100vh - 80px);height:calc(100svh - 80px);min-height:560px}
+.sp-home .ferramenta iframe{width:100%;height:100%;border:0;display:block}
+.sp-home .cores-app{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:32px}
+@media (max-width:860px){.sp-home .cores-app{grid-template-columns:1fr}}
+.sp-home .envio{display:block;border:2px dashed #b9ab96;border-radius:14px;padding:22px;text-align:center;cursor:pointer;background:#fbf8f3}
+.sp-home .envio input{display:none}
+.sp-home .envio strong{display:block;font-size:1.05em;margin-bottom:4px;color:var(--tinta-escura)}
+.sp-home .foto-ambiente{margin-top:14px;border-radius:10px;max-height:360px;width:100%;object-fit:contain;background:#EFEBDF}
+.sp-home .paleta{display:flex;height:64px;border-radius:10px;overflow:hidden;margin:14px 0 6px}
+.sp-home .paleta div{display:flex;align-items:end;justify-content:center;font-size:.7em;padding-bottom:4px}
+.sp-home .harmonias{display:grid;gap:10px;margin:14px 0}
+.sp-home .harmonia{display:flex;align-items:center;gap:12px;font-size:.9em}
+.sp-home .harmonia .chips{display:flex}
+.sp-home .harmonia .chips span{width:30px;height:30px;border-radius:50%;margin-right:-6px;border:2px solid var(--linho)}
+.sp-home .modos{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 16px}
+.sp-home .modos button{border:1px solid #b9ab96;background:#fff;color:var(--tinta-escura);border-radius:999px;padding:8px 14px;font:inherit;font-size:.9em;cursor:pointer}
+.sp-home .modos button.on{background:var(--tinta-escura);color:#fff;border-color:var(--tinta-escura)}
+.sp-home .recomendadas{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(150px,100%),1fr));gap:14px}
+.sp-home .rec{background:#fff;border-radius:10px;padding:8px;font-size:.85em;color:var(--tinta-escura)}
+.sp-home .rec img{aspect-ratio:1;object-fit:contain;background:#EFEBDF;width:100%;border-radius:6px;cursor:pointer}
+.sp-home .rec .dots{display:flex;gap:3px;margin:6px 0}
+.sp-home .rec .dots i{width:12px;height:12px;border-radius:50%}
+.sp-home .rec button{width:100%;margin-top:6px;border:0;border-radius:999px;padding:7px;background:var(--tinta-escura);color:#fff;font:600 .8em var(--corpo);cursor:pointer}
+.sp-home .aviso-cor{font-size:.82em;color:var(--suave-escuro);margin-top:10px}
+.sp-home .chamada{background:linear-gradient(135deg,#2A7560,#18503F);border:1px solid #3F8770;border-radius:18px;padding:32px;display:grid;grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:28px;align-items:center}
+@media (max-width:860px){.sp-home .chamada{grid-template-columns:1fr;padding:24px 18px}}
+.sp-home .chamada .btn{margin-top:8px}
+.sp-home .passos{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.sp-home .passos li{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:12px;color:var(--suave-claro);font-size:.95em}
+.sp-home .passos .num{grid-row:span 2;width:40px;height:40px;border-radius:50%;background:var(--ouro);color:#18503F;display:flex;align-items:center;justify-content:center;font:600 1.1em var(--corpo)}
+.sp-home .passos b{color:#f2ebe0;font-size:1.05em}
+.sp-home .fotos-aulas{display:grid;gap:8px}
+.sp-home .fotos-aulas .linha-fotos{display:flex;gap:8px}
+.sp-home .fotos-aulas img{width:0;min-width:0;height:auto;border-radius:8px}
+.sp-home .lista-aulas{display:grid;gap:14px;margin-top:20px}
+.sp-home .lista-aulas div{border-left:3px solid var(--ouro);padding-left:14px}
+.sp-home .lista-aulas b{display:block;color:var(--tinta-escura)}
+.sp-home form{display:flex;flex-direction:column;gap:10px;margin:0}
+.sp-home input,.sp-home textarea{font:inherit;padding:11px 12px;border-radius:10px;border:1px solid #c9bda9;background:#fff;color:var(--tinta-escura);width:100%}
+.sp-home input[type=checkbox]{width:auto}
+.sp-home .contato-linhas{display:grid;gap:10px;margin:18px 0}
+.sp-home .contato-linhas div{display:flex;gap:12px}
+.sp-home .contato-linhas span:first-child{min-width:90px;color:var(--suave-escuro);font-size:.85em}
+.sp-home .redes{display:flex;gap:10px}
+.sp-home .redes a{width:42px;height:42px;border-radius:50%;border:1px solid #b9ab96;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:.8em;font-weight:600}
+.sp-home .rodape{background:#163F33;color:var(--suave-claro);padding:36px 0;font-size:.9em}
+.sp-home .rodape .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.sp-home .rodape a{color:var(--tinta-clara)}
+
+/* ---- versão estática (GitHub Pages): página inteira, idiomas, catálogo e obra ---- */
+html,body{margin:0;padding:0}
+body{background:#1E5E4B}
+.sp-home .topo .wrap{flex-wrap:nowrap}
+.sp-home .topo-dir{display:flex;align-items:center;gap:10px;order:3}
+.sp-home .menu{order:2}
+.sp-home .idiomas{display:flex;gap:2px;font-size:.72em;letter-spacing:.04em}
+.sp-home .idiomas a{text-decoration:none;color:var(--suave-claro);padding:4px 6px;border-radius:6px;font-weight:600}
+.sp-home .idiomas a:hover{color:var(--tinta-clara)}
+.sp-home .idiomas a[aria-current]{background:var(--ouro);color:#1b160f}
+@media (max-width:860px){
+  .sp-home .marca{font-size:1.15em}
+  .sp-home .idiomas{font-size:.66em}
+  .sp-home .idiomas a{padding:4px 4px}
+}
+@media (max-width:420px){.sp-home .marca em{display:none}}
+.sp-home .btn-whats{background:#25D366;color:#fff;border-color:#25D366}
+.sp-home .btn-whats svg{flex:none}
+.sp-home .acoes-form{display:flex;gap:10px;flex-wrap:wrap}
+.sp-home .nota-form{font-size:.88em;color:var(--suave-claro);margin:0}
+.sp-home .contato-linhas a{color:inherit}
+.sp-wa-flutuante{position:fixed;right:18px;bottom:18px;z-index:9999;width:60px;height:60px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.sp-wa-flutuante:focus-visible{outline:3px solid #E8CA88;outline-offset:3px}
+/* catálogo */
+.sp-home .catalogo,.sp-home .obra,.sp-home .parecidas{padding:48px 0 64px}
+.sp-home .catalogo h1,.sp-home .obra h1{font-size:clamp(2em,5vw,3.2em);margin:6px 0 12px}
+.sp-home .lead-cat{max-width:62ch;color:var(--suave-claro)}
+.sp-home .nota-num{color:var(--ouro);font-size:.9em}
+.sp-home .filtros{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 24px}
+.sp-home .filtros button{font:500 .88em var(--corpo);border-radius:999px;padding:8px 14px;border:1px solid rgba(255,255,255,.25);background:transparent;color:var(--suave-claro);cursor:pointer}
+.sp-home .filtros button small{opacity:.65;margin-left:2px}
+.sp-home .filtros button.on{background:var(--ouro);color:#1b160f;border-color:var(--ouro)}
+.sp-home .grade-cat{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:22px}
+@media (max-width:520px){.sp-home .grade-cat{grid-template-columns:1fr 1fr;gap:14px}}
+.sp-home .cartao{display:flex;flex-direction:column;gap:8px;text-decoration:none;color:var(--tinta-clara)}
+.sp-home .cartao[hidden]{display:none}
+.sp-home .cartao .moldura{display:block;aspect-ratio:1/1;background:#163F33;border-radius:6px;overflow:hidden;box-shadow:0 10px 22px -12px rgba(0,0,0,.6)}
+.sp-home .cartao img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.sp-home .cartao:hover img{transform:scale(1.04)}
+.sp-home .cartao-nome{font-size:.92em;line-height:1.35}
+.sp-home .selo{font-size:.7em;letter-spacing:.08em;text-transform:uppercase;color:var(--ouro)}
+.sp-home .chamada-cat{margin-top:44px;padding:28px;border:1px solid rgba(255,255,255,.12);border-radius:14px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.sp-home .chamada-cat p{flex:1 1 280px;margin:0}
+/* página da obra */
+.sp-home .trilha{font-size:.88em;color:var(--suave-claro)}
+.sp-home .trilha a{color:var(--suave-claro)}
+.sp-home .obra-duas{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:40px;align-items:start;margin-top:12px}
+@media (max-width:860px){.sp-home .obra-duas{grid-template-columns:1fr;gap:24px}}
+.sp-home .obra-img{margin:0;background:#163F33;border-radius:8px;padding:14px;box-shadow:0 18px 40px -20px rgba(0,0,0,.7)}
+.sp-home .obra-img img{width:100%;height:auto;border-radius:3px}
+.sp-home .obra-txt p{color:var(--suave-claro)}
+.sp-home .chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+.sp-home .chip{font-size:.8em;padding:4px 12px;border:1px solid rgba(255,255,255,.22);border-radius:999px;text-decoration:none;color:var(--suave-claro)}
+.sp-home .acoes-obra{display:flex;flex-direction:column;gap:10px;margin:22px 0 12px;align-items:flex-start}
+.sp-home .nota-obra{font-size:.88em}
+.sp-home .nota-obra a{color:var(--tinta-clara)}
+.sp-home .parecidas h2{margin-bottom:22px}
+.sp-home .obra + #parede{scroll-margin-top:70px}

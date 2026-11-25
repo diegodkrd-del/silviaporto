@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quadro na Parede</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<script>/* aberta dentro de outra página? usa o layout compacto (classe "embutido") */ if (window.self !== window.top) document.documentElement.classList.add("embutido");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ===== Cores (claro / escuro) ===== */
+  :root {
+    /* layout: prévia grande + painel de controles; tela de linho e azul ultramar */
+    --bg: #eeebe4; --card: #fbfaf7; --texto: #22242b; --suave: #6b6a70;
+    --linha: #dcd8cf; --destaque: #2d4a8f; --destaque-txt: #fff; --chip: #e7e4dc;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17181c; --card: #212228; --texto: #eeece6; --suave: #a3a2a8;
+      --linha: #34353d; --destaque: #8fa8e8; --destaque-txt: #14161c; --chip: #2a2b32; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17181c; --card: #212228; --texto: #eeece6; --suave: #a3a2a8;
+    --linha: #34353d; --destaque: #8fa8e8; --destaque-txt: #14161c; --chip: #2a2b32; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--texto); font: 15px/1.45 Figtree, system-ui, sans-serif; }
+  header { padding-block: 20px 8px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); max-width: 1280px; margin: 0 auto; }
+  h1 { font: 600 30px/1.1 "Fraunces", Georgia, serif; margin: 0; }
+  header p { margin: 4px 0 0; color: var(--suave); }
+  main { max-width: 1280px; margin: 0 auto; padding-block: 8px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 16px; }
+  main > section { min-width: 0; }
+  /* celular: a prévia fica presa no topo enquanto ajusta os controles */
+  #visual { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-top: 6px; }
+  #visual #tela { max-height: 34vh; }
+  @media (max-width: 899px) { .dica, #atalhoParede .mini { display: none; } #atalhoParede { padding: 12px; font-size: 15px; } .acoes .btn:focus-visible, .chip:focus-visible { outline: 3px solid var(--destaque); outline-offset: 2px; }
+  .btn { flex: 1; padding: 9px; font-size: 13px; } }
+  @media (min-width: 900px) {
+    main { grid-template-columns: 370px 1fr; grid-template-areas: "painel visual" "painel grade"; align-items: start; }
+    #painel { grid-area: painel; position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow: auto; }
+    #visual { grid-area: visual; position: static; padding: 0; }
+    #visual #tela { max-height: 72vh; }
+    #secGrade { grid-area: grade; }
+  }
+  /* Dentro de outra página (iframe): sem título repetido, imagem maior e sempre à vista;
+     só as opções rolam por baixo dela */
+  html.embutido header { display: none; }
+  html.embutido main { padding-block: 0 24px; }
+  /* no celular a ferramenta cresce dentro da página do site (sem rolagem própria): a página rola normalmente
+     e a foto inteira cabe na tela, abaixo do menu fixo do site (--alto-pai vem da página) */
+  @media (max-width: 899px) {
+    html.embutido #visual { position: static; padding-top: 0; }
+    html.embutido #visual #tela { max-height: calc(var(--alto-pai, 640px) * .62); }
+    html.embutido #palco { padding: 6px; }
+  }
+  /* letra maior no celular dentro da página do site */
+  @media (max-width: 899px) {
+    html.embutido body { font-size: 16px; }
+    html.embutido .mini { font-size: 14px; }
+    html.embutido .chip, html.embutido .btn { font-size: 15px; }
+    html.embutido .card h2 { font-size: 14px; }
+  }
+  @media (min-width: 900px) {
+    html.embutido #painel { top: 0; max-height: 100vh; }
+    html.embutido #visual { position: sticky; top: 0; }
+    html.embutido #visual #tela { max-height: calc(100vh - 150px); }
+  }
+  .card { background: var(--card); border: 1px solid var(--linha); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+  .card h2 { font: 600 13px/1 Figtree, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .06em; color: var(--suave); margin: 0 0 10px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 1px solid var(--linha); background: var(--chip); color: var(--texto); border-radius: 999px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+  .chip.on { background: var(--destaque); color: var(--destaque-txt); border-color: var(--destaque); }
+  .btn:focus-visible, .chip:focus-visible { outline: 3px solid var(--destaque); outline-offset: 2px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 10px; padding: 11px 14px; font: 600 14px Figtree, system-ui, sans-serif; cursor: pointer; background: var(--destaque); color: var(--destaque-txt); text-decoration: none; }
+  .btn.sec { background: var(--chip); color: var(--texto); border: 1px solid var(--linha); }
+  .linha { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  input[type=number], input[type=text] { width: 80px; padding: 8px; border-radius: 8px; border: 1px solid var(--linha); background: var(--bg); color: var(--texto); font: inherit; }
+  input[type=text] { width: 100%; }
+  input[type=range] { width: 100%; accent-color: var(--destaque); }
+  label.upload { display: block; border: 2px dashed var(--linha); border-radius: 12px; padding: 14px; text-align: center; cursor: pointer; color: var(--suave); }
+  label.upload input { display: none; }
+  /* botão principal: usar a foto da própria parede */
+  #atalhoParede { background: var(--destaque); color: var(--destaque-txt); border: 0; box-shadow: 0 6px 16px -8px rgba(0,0,0,.55); }
+  #atalhoParede .mini { color: inherit; opacity: .85; }
+  .mini { font-size: 12px; color: var(--suave); }
+  .thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid var(--linha); }
+  .abas { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+  #palco { background: var(--card); border: 1px solid var(--linha); border-radius: 14px; padding: 10px; }
+  #tela { width: 100%; height: auto; display: block; border-radius: 8px; touch-action: none; max-height: 78vh; object-fit: contain; }
+  .acoes { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .aviso { background: var(--chip); border-radius: 10px; padding: 10px; font-size: 13px; margin-top: 8px; }
+  .grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 10px; margin-top: 10px; }
+  .grade figure { margin: 0; background: var(--card); border: 1px solid var(--linha); border-radius: 10px; overflow: hidden; cursor: pointer; }
+  .grade canvas { width: 100%; display: block; }
+  .grade figcaption { padding: 6px 10px; font-size: 13px; }
+  .oculto { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Veja o quadro na parede</h1>
+  <p>Silvia Porto · arte pintada à mão — coloque a obra em vários ambientes ou na foto da sua própria parede.</p>
+</header>
+
+<main>
+  <!-- ===== Visualização ===== -->
+  <section id="visual">
+    <div id="palco">
+      <canvas id="tela" width="1600" height="1000"></canvas>
+      <label class="upload" id="atalhoParede" style="margin-top:10px">📷 <b id="atalhoTxt">Ver o quadro na foto da MINHA parede</b><br><span class="mini">Fotografe de frente o lugar onde o quadro vai ficar</span><input id="arqParede2" type="file" accept="image/*"></label>
+      <div class="acoes">
+        <button class="btn sec" id="baixar">⬇️ Baixar esta imagem</button>
+        <a class="btn sec" id="whats" target="_blank" rel="noopener">💬 Pedir pelo WhatsApp</a>
+      </div>
+      <p id="avisoDl" class="aviso oculto" role="status"></p>
+      <p class="mini dica" style="margin:8px 2px 0">Dica: arraste o quadro para mudar a posição. A simulação é aproximada — cores reais podem variar.</p>
+    </div>
+
+  </section>
+
+  <!-- ===== Painel de controles ===== -->
+  <section id="painel">
+    <div class="card">
+      <h2>1 · Foto do quadro que vai na parede acima</h2>
+      <div class="linha">
+        <img id="thumbArte" class="thumb" alt="">
+        <label class="upload" style="flex:1">📷 Escolher foto da obra<input id="arqArte" type="file" accept="image/*"></label>
+      </div>
+      <p class="mini">Fotografe a obra de frente, só a pintura (sem fundo). Se precisar, recorte antes.</p>
+      <input id="nomeObra" type="hidden"><!-- nome vem da galeria do site; vai no texto e no WhatsApp -->
+    </div>
+
+    <div class="card">
+      <h2>2 · Uma tela ou várias</h2>
+      <div id="telas" class="chips"></div>
+      <p class="mini">A imagem é dividida em telas lado a lado (8 cm entre elas). Assim o quadro fica tão largo quanto você quiser.</p>
+    </div>
+
+    <div class="card">
+      <h2>3 · Tamanho total (largura × altura)</h2>
+      <div class="linha">
+        <input id="larg" type="number" min="10" max="3000" placeholder="largura"> × <input id="alt" type="number" min="10" max="300" placeholder="altura"> cm
+      </div>
+      <p class="mini" id="infoTelas">Digite a largura e a altura que você quer, em centímetros.</p>
+    </div>
+
+    <div class="card">
+      <h2>4 · Acabamento</h2>
+      <div id="molduras" class="chips"></div>
+    </div>
+
+    <div class="card">
+      <h2>5 · Onde ver</h2>
+      <div class="abas">
+        <button class="chip on" id="abaAmb">🛋️ Ambientes</button>
+        <button class="chip" id="abaPar">📱 Minha parede</button>
+      </div>
+
+      <div id="boxAmb">
+        <div id="padroes" class="chips"></div>
+        <p class="mini" style="margin:12px 0 6px">Cômodo</p>
+        <div id="ambientes" class="chips"></div>
+      </div>
+
+      <div id="boxPar" class="oculto">
+        <label class="upload">🏠 Foto da parede onde vai o quadro<input id="arqParede" type="file" accept="image/*"></label>
+        <p class="mini">Tire a foto de frente para a parede. Arraste o quadro com o dedo ou o mouse.</p>
+        <p class="mini" style="margin-bottom:2px">Tamanho na foto: <b id="multTxt">100%</b></p>
+        <input id="mult" type="range" min="20" max="400" value="100">
+        <p class="mini" style="margin-bottom:2px">Luz do ambiente (escurecer a obra)</p>
+        <input id="luz" type="range" min="0" max="50" value="10">
+        <div class="linha" style="margin-top:8px">
+          <button class="btn sec" id="calibrar">📏 Medir tamanho real</button>
+          <button class="btn sec" id="centralizar">⊕ Centralizar</button>
+        </div>
+        <div id="calibBox" class="aviso oculto"></div>
+      </div>
+    </div>
+
+    <div class="card" style="display:none"><!-- formato da imagem: escolhido sozinho (deitado no computador, em pé no celular) -->
+      <h2>Formato da imagem</h2>
+      <div id="formatos" class="chips"></div>
+      <label class="linha mini" style="margin-top:10px"><input type="checkbox" id="mostraMedida" checked> Escrever a medida na imagem</label>
+    </div>
+  </section>
+
+  <section id="secGrade">
+    <div class="card" id="cardGrade">
+      <div class="linha" style="justify-content:space-between">
+        <div class="chips">
+          <button class="chip on" id="gAmb">Todos os ambientes</button>
+          <button class="chip" id="gTam">Comparar tamanhos</button>
+        </div>
+        <button class="btn sec" id="baixarTodas">⬇️ Baixar todas</button>
+      </div>
+      <div id="grade" class="grade"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* =========================================================
+   Configurações
+   ========================================================= */
+// ?modo=silvia = versão da página inicial (atendimento da Silvia); sem o parâmetro = loja online (Diego)
+const PARAMS = new URLSearchParams(location.search);
+const MODO_SILVIA = PARAMS.get("modo") === "silvia";
+const WHATSAPP = "5551992838195"; // atendimento do Diego também na home (só o botão flutuante da home vai para a Silvia)
+const SAUDACAO = MODO_SILVIA ? "Olá, Silvia!" : "Olá!";
+
+// Tamanhos mais pedidos (largura × altura em cm, na vertical)
+const TAMANHOS = [[40,50],[50,60],[50,70],[60,80],[70,90],[70,100],[80,80],[80,120],[90,130],[100,150]];
+
+const MOLDURAS = [
+  { id: "tela",    nome: "Tela sem moldura", esp: 0 },
+  { id: "preta",   nome: "Moldura preta",    esp: 2.5, cor: "#1d1b1a" },
+  { id: "branca",  nome: "Moldura branca",   esp: 2.5, cor: "#f4f1ec" },
+  { id: "madeira", nome: "Madeira natural",  esp: 3.5, cor: "#9a6b3f" },
+  { id: "dourada", nome: "Dourada",          esp: 4,   cor: "#b8913a" },
+  { id: "caixa",   nome: "Caixa flutuante",  esp: 1.2, cor: "#2a2523", vao: 1.5 },
+];
+
+
+const FORMATOS = [
+  { id: "paisagem", nome: "16:10 site", w: 1600, h: 1000 },
+  { id: "quadrado", nome: "1:1 feed",   w: 1400, h: 1400 },
+  { id: "retrato",  nome: "4:5 feed",   w: 1280, h: 1600 },
+  { id: "stories",  nome: "9:16 stories", w: 1080, h: 1920 },
+];
+
+/* =========================================================
+   Estado do app
+   ========================================================= */
+const est = {
+  arte: null,                 // imagem da obra (canvas ou img)
+  w: 70, h: 90,               // tamanho em cm
+  moldura: "tela",
+  paineis: 1,                 // número de telas lado a lado
+  digitado: false,            // a pessoa já digitou o tamanho? (antes disso, mostra um tamanho de exemplo)
+  padrao: "luxo",             // "luxo" | "normal"
+  ambiente: MODO_SILVIA ? "luxo-marmore" : "luxo-sala", // id da foto do ambiente
+  modo: "amb",                // "amb" | "par"
+  formato: "paisagem",
+  desloc: { x: 0, y: 0 },     // deslocamento do quadro nos ambientes (cm)
+  parede: null,               // foto da parede do cliente
+  pxCm: 1, mult: 1, luz: 0.1, // escala na foto da parede
+  pos: { x: 0.5, y: 0.42 },   // posição do quadro na foto (0..1)
+  calib: null,                // pontos da medição
+  grade: "amb",
+};
+
+const $ = (id) => document.getElementById(id);
+const tela = $("tela");
+
+/* =========================================================
+   Obra de exemplo (enquanto não há foto) — pintura abstrata gerada
+   ========================================================= */
+function arteExemplo() {
+  const c = document.createElement("canvas"); c.width = 700; c.height = 900;
+  const x = c.getContext("2d");
+  const g = x.createLinearGradient(0, 0, 0, 900);
+  g.addColorStop(0, "#f2c46d"); g.addColorStop(.55, "#d9744a"); g.addColorStop(1, "#2f5d6b");
+  x.fillStyle = g; x.fillRect(0, 0, 700, 900);
+  // pinceladas
+  let semente = 7; const r = () => (semente = (semente * 9301 + 49297) % 233280) / 233280;
+  const cores = ["#fff3d6","#b4532a","#1f4552","#e9a23b","#f7e3c4","#5c8a7d"];
+  for (let i = 0; i < 160; i++) {
+    x.globalAlpha = .35 + r() * .5; x.fillStyle = cores[Math.floor(r() * cores.length)];
+    x.save(); x.translate(r() * 700, r() * 900); x.rotate((r() - .5) * 1.2);
+    x.beginPath(); x.ellipse(0, 0, 20 + r() * 70, 6 + r() * 16, 0, 0, Math.PI * 2); x.fill(); x.restore();
+  }
+  x.globalAlpha = 1;
+  x.fillStyle = "#fff6e0"; x.beginPath(); x.arc(470, 250, 70, 0, 7); x.fill();
+  return c;
+}
+
+/* =========================================================
+   Desenho do quadro (em pixels de tela)
+   ========================================================= */
+// várias telas: a obra (largura total est.w × altura est.h) é dividida em est.paineis telas lado a lado, com 8 cm entre elas
+const VAO_TELAS_CM = 8;
+const TELAS = [1, 2, 3, 4, 5, 6].map((n) => ({ id: n, nome: n === 1 ? "1 tela" : `${n} telas` }));
+// produção: lado menor de cada tela até 90 cm (econômico) ou 95 cm (premium)
+const LIMITE_ECO_CM = 90, LIMITE_PREMIUM_CM = 95;
+// número com vírgula (ex.: 94,7)
+function cm(x) { return (Math.round(x * 10) / 10).toLocaleString("pt-BR"); }
+function larguraTela() { return (est.w - (est.paineis - 1) * VAO_TELAS_CM) / est.paineis; }
+let fatiasCache = { img: null, chave: "", fatias: [] };
+function fatiasTelas(img, n, w, h) {
+  const chave = `${n}-${w}x${h}`;
+  if (fatiasCache.img === img && fatiasCache.chave === chave) return fatiasCache.fatias;
+  const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
+  const alvo = (n * w) / h; let sx = 0, sy = 0, sw = iw, sh = ih; // recorte da obra inteira na proporção das telas juntas
+  if (iw / ih > alvo) { sw = ih * alvo; sx = (iw - sw) / 2; } else { sh = iw / alvo; sy = (ih - sh) / 2; }
+  const fatias = Array.from({ length: n }, (_, i) => {
+    const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(sw / n)); c.height = Math.max(1, Math.round(sh));
+    c.getContext("2d").drawImage(img, sx + i * sw / n, sy, sw / n, sh, 0, 0, c.width, c.height);
+    return c;
+  });
+  fatiasCache = { img, chave, fatias };
+  return fatias;
+}
+// desenha a obra: uma tela só, ou várias lado a lado ocupando a largura total wPx
+function desenharObra(ctx, img, cx, cy, wPx, hPx, pxCm, molduraId, luz = 0) {
+  const n = est.paineis;
+  if (n <= 1) return desenharQuadro(ctx, img, cx, cy, wPx, hPx, pxCm, molduraId, luz);
+  const vao = VAO_TELAS_CM * pxCm, wt = (wPx - (n - 1) * vao) / n;
+  fatiasTelas(img, n, wt, hPx).forEach((f, i) => desenharQuadro(ctx, f, cx - wPx / 2 + wt / 2 + i * (wt + vao), cy, wt, hPx, pxCm, molduraId, luz));
+}
+// medida em texto (rodapé e WhatsApp); vazio enquanto a pessoa não digita o tamanho
+function medidaTxt() {
+  if (!est.digitado) return "";
+  return est.paineis > 1 ? `${est.w} × ${est.h} cm em ${est.paineis} telas de ${cm(larguraTela())} × ${est.h} cm` : `${est.w} × ${est.h} cm`;
+}
+// aviso da capacidade de produção
+function infoTelas() {
+  if (!est.digitado) return "Digite a largura e a altura que você quer, em centímetros.";
+  const lt = larguraTela(), menor = Math.min(lt, est.h);
+  const cada = est.paineis > 1 ? `Cada tela: ${cm(lt)} × ${est.h} cm. ` : "";
+  if (lt < 10) return `⚠️ ${cada}Telas estreitas demais: escolha menos telas ou aumente a largura.`;
+  if (menor <= LIMITE_ECO_CM) return `✅ ${cada}Dá para fazer nesse tamanho.`;
+  if (menor <= LIMITE_PREMIUM_CM) return `✅ ${cada}Dá para fazer nesse tamanho (até ${LIMITE_PREMIUM_CM} cm no lado menor de cada tela).`;
+  // quantas telas seriam necessárias para caber
+  let n = est.paineis; while (n < 50 && Math.min((est.w - (n - 1) * VAO_TELAS_CM) / n, est.h) > LIMITE_PREMIUM_CM) n++;
+  return `⚠️ ${cada}Cada tela pode ter no máximo ${LIMITE_PREMIUM_CM} cm no lado menor. Escolha ${n} telas ou mais.`;
+}
+
+function desenharQuadro(ctx, img, cx, cy, wPx, hPx, pxCm, molduraId, luz = 0) {
+  const m = MOLDURAS.find((q) => q.id === molduraId);
+  const esp = m.esp * pxCm, vao = (m.vao || 0) * pxCm;
+  const W = wPx + 2 * (esp + vao), H = hPx + 2 * (esp + vao);
+  const x0 = cx - W / 2, y0 = cy - H / 2;
+
+  // sombra na parede
+  ctx.save();
+  ctx.shadowColor = "rgba(0,0,0,.38)"; ctx.shadowBlur = Math.max(6, 5 * pxCm); ctx.shadowOffsetY = 2.2 * pxCm; ctx.shadowOffsetX = .8 * pxCm;
+  ctx.fillStyle = m.cor || "#ddd"; ctx.fillRect(x0, y0, W, H);
+  ctx.restore();
+
+  // moldura com leve volume
+  if (esp > 0) {
+    ctx.fillStyle = m.cor; ctx.fillRect(x0, y0, W, H);
+    const gr = ctx.createLinearGradient(x0, y0, x0 + W, y0 + H);
+    gr.addColorStop(0, "rgba(255,255,255,.28)"); gr.addColorStop(.5, "rgba(255,255,255,0)"); gr.addColorStop(1, "rgba(0,0,0,.25)");
+    ctx.fillStyle = gr; ctx.fillRect(x0, y0, W, H);
+    if (m.id === "dourada") { ctx.strokeStyle = "rgba(255,230,160,.6)"; ctx.lineWidth = Math.max(1, .4 * pxCm); ctx.strokeRect(x0 + esp * .45, y0 + esp * .45, W - esp * .9, H - esp * .9); }
+    if (vao > 0) { ctx.fillStyle = "#1a1715"; ctx.fillRect(x0 + esp, y0 + esp, W - 2 * esp, H - 2 * esp); }
+  }
+
+  // pintura (recorte "cover" para caber na proporção escolhida)
+  const ax = cx - wPx / 2, ay = cy - hPx / 2;
+  const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
+  const alvo = wPx / hPx, origem = iw / ih;
+  let sx = 0, sy = 0, sw = iw, sh = ih;
+  if (origem > alvo) { sw = ih * alvo; sx = (iw - sw) / 2; } else { sh = iw / alvo; sy = (ih - sh) / 2; }
+  ctx.drawImage(img, sx, sy, sw, sh, ax, ay, wPx, hPx);
+
+  // tela sem moldura: lateral da tela (espessura) e brilho suave
+  if (esp === 0) {
+    ctx.fillStyle = "rgba(0,0,0,.22)"; ctx.fillRect(ax + wPx, ay + pxCm * .6, Math.max(2, 1.2 * pxCm), hPx - pxCm * .6);
+  }
+  const brilho = ctx.createLinearGradient(ax, ay, ax + wPx, ay + hPx);
+  brilho.addColorStop(0, "rgba(255,255,255,.10)"); brilho.addColorStop(.6, "rgba(255,255,255,0)"); brilho.addColorStop(1, "rgba(0,0,0,.10)");
+  ctx.fillStyle = brilho; ctx.fillRect(ax, ay, wPx, hPx);
+  if (luz > 0) { ctx.fillStyle = `rgba(20,14,8,${luz})`; ctx.fillRect(ax, ay, wPx, hPx); }
+  return { x0, y0, W, H };
+}
+
+/* =========================================================
+   Ambientes em foto (gerados com IA, parede vazia)
+   Medidas em fração da foto: x1/x2 = bordas do móvel, cm = largura real do móvel,
+   base = altura (0 no topo, 1 embaixo) do ponto mais alto do móvel/objetos.
+   Daí sai a escala px/cm e a altura certa de pendurar o quadro.
+   ========================================================= */
+const PASTA_FOTOS = "../parede/ambientes-silvia/web/";
+// na página inicial da Silvia: uma foto só (salão de mármore com vista para o mar); na loja: todos os ambientes
+const PADROES = MODO_SILVIA ? [{ id: "luxo", nome: "Alto padrão" }] : [{ id: "luxo", nome: "Alto padrão" }, { id: "normal", nome: "Padrão normal" }];
+const COMODOS = MODO_SILVIA ? [{ id: "marmore", nome: "Salão de mármore" }] : [
+  { id: "sala", nome: "Sala de estar" }, { id: "jantar", nome: "Sala de jantar" }, { id: "quarto", nome: "Quarto" },
+  { id: "hall", nome: "Hall de entrada" }, { id: "escritorio", nome: "Escritório" },
+];
+const MEDIDAS = {
+  //                horizontal (16x9)                         vertical (4x5)
+  "luxo-sala":        [[0.173, 0.805, 260, 0.55],              [0.116, 0.896, 260, 0.577]],
+  "luxo-jantar":      [[0.138, 0.823, 200, 0.555],             [0.206, 0.825, 200, 0.52]],
+  "luxo-quarto":      [[0.346, 0.650, 200, 0.42],              [0.282, 0.754, 200, 0.456]],
+  "luxo-hall":        [[0.349, 0.651, 160, 0.58, 0.56],        [0.254, 0.754, 160, 0.37]],
+  "luxo-escritorio":  [[0.292, 0.713, 180, 0.51],              [0.184, 0.816, 180, 0.49]],
+  "normal-sala":      [[0.266, 0.726, 220, 0.52],              [0.215, 0.754, 220, 0.535]],
+  "normal-jantar":    [[0.328, 0.673, 160, 0.47],              [0.258, 0.746, 160, 0.44]],
+  "normal-quarto":    [[0.358, 0.643, 160, 0.435],             [0.287, 0.737, 160, 0.473]],
+  "normal-hall":      [[0.363, 0.638, 120, 0.40],              [0.311, 0.694, 120, 0.47]],
+  "normal-escritorio":[[0.337, 0.663, 120, 0.475],              [0.215, 0.789, 120, 0.458]],
+  "luxo-marmore":     [[0.311, 0.691, 320, 0.546],             [0.311, 0.691, 320, 0.546]], // aparador de 3,20 m: parede do salão com ~3,6 m
+};
+// foto do salão de mármore (home da Silvia): fica na Mídia do site (id 14068)
+const FOTO_MARMORE = "../parede/luxo-marmore-16x9-1.jpg";
+const FOLGA_CM = 18; // espaço entre o móvel e a borda de baixo do quadro
+
+const AMBIENTES = PADROES.flatMap((p) => COMODOS.map((c) => {
+  const id = `${p.id}-${c.id}`;
+  const foto = (fmt, m) => { const img = new Image(); img.onload = agendarRender; img.src = id === "luxo-marmore" ? FOTO_MARMORE : `${PASTA_FOTOS}${id}-${fmt}.jpg`;
+    return { img, x1: m[0], x2: m[1], cm: m[2], base: m[3], cx: m[4] ?? (m[0] + m[1]) / 2 }; };
+  // inteira = mostra a foto toda (colunas e janelas) em qualquer formato, com fundo desfocado em volta
+  const inteira = id === "luxo-marmore";
+  const h = foto("16x9", MEDIDAS[id][0]);
+  return { id, padrao: p.id, comodo: c.id, nome: `${c.nome} · ${p.nome.toLowerCase()}`, inteira, h, v: inteira ? h : foto("4x5", MEDIDAS[id][1]) };
+}));
+// fundo desfocado: reduz a foto a poucos pixels e amplia de novo (funciona em qualquer navegador)
+function fundoDesfocado(ctx, img, W, H) {
+  const p = document.createElement("canvas"); p.width = 24; p.height = Math.max(1, Math.round(24 * img.naturalHeight / img.naturalWidth));
+  p.getContext("2d").drawImage(img, 0, 0, p.width, p.height);
+  const s = Math.max(W / p.width, H / p.height);
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(p, (W - p.width * s) / 2, (H - p.height * s) / 2, p.width * s, p.height * s);
+}
+let timerRender;
+function agendarRender() { clearTimeout(timerRender); timerRender = setTimeout(render, 60); }
+
+/* =========================================================
+   Renderização
+   ========================================================= */
+function textoRodape(ctx, W, H, extra) {
+  const nome = $("nomeObra").value.trim();
+  const partes = ["Silvia Porto"];
+  if (nome) partes.push(nome);
+  if ($("mostraMedida").checked && medidaTxt()) partes.push(medidaTxt());
+  if (extra) partes.push(extra);
+  const fs = Math.round(Math.max(W, H) / 60);
+  ctx.font = `600 ${fs}px Figtree, system-ui, sans-serif`; const txt = partes.join("  ·  ");
+  const tw = ctx.measureText(txt).width;
+  ctx.fillStyle = "rgba(20,15,10,.55)"; ctx.beginPath(); ctx.roundRect(W - tw - fs * 2.2, H - fs * 2.6, tw + fs * 1.6, fs * 1.9, fs * .9); ctx.fill();
+  ctx.fillStyle = "#fff"; ctx.textBaseline = "middle"; ctx.fillText(txt, W - tw - fs * 1.4, H - fs * 1.65);
+}
+
+// desenha um ambiente (foto) com o quadro na escala certa
+function renderAmbiente(cv, ambId, w = est.w, h = est.h, comRodape = true) {
+  const amb = AMBIENTES.find((a) => a.id === ambId);
+  const ctx = cv.getContext("2d"); const W = cv.width, H = cv.height;
+  const f = W / H >= 1.2 ? amb.h : amb.v; // horizontal ou vertical, conforme o formato
+  const iw = f.img.naturalWidth, ih = f.img.naturalHeight;
+  if (!iw) { // foto ainda carregando
+    ctx.fillStyle = "#e7e2d9"; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "#6b6a70"; ctx.font = `500 ${W / 30}px Figtree, system-ui, sans-serif`; ctx.textAlign = "center";
+    ctx.fillText("Carregando o ambiente…", W / 2, H / 2); ctx.textAlign = "start";
+    return { s: 1 };
+  }
+  // posição do quadro na foto original (em px da foto)
+  const pc = (f.x2 - f.x1) * iw / f.cm;               // px por cm na foto
+  let cy = f.base * ih - FOLGA_CM * pc - (h / 2) * pc;  // centro do quadro
+  cy = Math.max(cy, 0.03 * ih + (h / 2) * pc);           // não passa do teto
+  cy -= est.desloc.y * pc;
+  const cx = f.cx * iw + est.desloc.x * pc;
+  let s, ox, oy;
+  if (amb.inteira) { // foto inteira no meio, fundo desfocado em volta
+    fundoDesfocado(ctx, f.img, W, H);
+    s = Math.min(W / iw, H / ih); ox = (W - iw * s) / 2; oy = (H - ih * s) / 2;
+  } else { // recorte "cover" centrado no quadro, sem sair da foto
+    s = Math.max(W / iw, H / ih);
+    const focoY = (cy + f.base * ih) / 2;
+    ox = Math.min(0, Math.max(W - iw * s, W / 2 - cx * s));
+    oy = Math.min(0, Math.max(H - ih * s, H / 2 - focoY * s));
+  }
+  ctx.drawImage(f.img, ox, oy, iw * s, ih * s);
+  const k = pc * s; // px por cm no canvas
+  desenharObra(ctx, est.arte, ox + cx * s, oy + cy * s, w * k, h * k, k, est.moldura);
+  if (comRodape) textoRodape(ctx, W, H, null);
+  return { s: k };
+}
+
+// desenha a foto da parede do cliente com o quadro
+function renderParede(cv, comRodape = true, comGuia = true) {
+  const ctx = cv.getContext("2d"); const W = cv.width, H = cv.height;
+  ctx.drawImage(est.parede, 0, 0, W, H);
+  const k = est.pxCm * est.mult;
+  desenharObra(ctx, est.arte, est.pos.x * W, est.pos.y * H, est.w * k, est.h * k, k, est.moldura, est.luz);
+  if (comGuia && est.calib) { // pontos da medição
+    ctx.strokeStyle = "#ff5a1f"; ctx.fillStyle = "#ff5a1f"; ctx.lineWidth = Math.max(3, W / 400);
+    est.calib.pts.forEach(([x, y]) => { ctx.beginPath(); ctx.arc(x, y, W / 120, 0, 7); ctx.fill(); });
+    if (est.calib.pts.length === 2) { ctx.beginPath(); ctx.moveTo(...est.calib.pts[0]); ctx.lineTo(...est.calib.pts[1]); ctx.stroke(); }
+  }
+  if (comRodape) textoRodape(ctx, W, H, est.calibrado ? null : "medida aproximada");
+}
+
+function tamanhoCanvasParede() {
+  const iw = est.parede.naturalWidth, ih = est.parede.naturalHeight, max = 1800;
+  const f = Math.min(1, max / Math.max(iw, ih));
+  return [Math.round(iw * f), Math.round(ih * f)];
+}
+
+let camAtual = null;
+function render() {
+  if (est.modo === "par" && est.parede) {
+    const [W, H] = tamanhoCanvasParede();
+    if (tela.width !== W || tela.height !== H) { tela.width = W; tela.height = H; }
+    renderParede(tela);
+  } else {
+    const f = FORMATOS.find((q) => q.id === est.formato);
+    if (tela.width !== f.w || tela.height !== f.h) { tela.width = f.w; tela.height = f.h; }
+    camAtual = renderAmbiente(tela, est.ambiente);
+    if (est.modo === "par") { // sem foto ainda: aviso por cima
+      const ctx = tela.getContext("2d"); ctx.fillStyle = "rgba(20,15,10,.6)"; ctx.fillRect(0, 0, tela.width, tela.height);
+      ctx.fillStyle = "#fff"; ctx.font = `600 ${tela.width / 28}px Figtree, system-ui, sans-serif`; ctx.textAlign = "center";
+      ctx.fillText("Envie a foto da sua parede 🏠", tela.width / 2, tela.height / 2); ctx.textAlign = "start";
+    }
+  }
+  atualizarWhats();
+  agendarGrade();
+}
+
+/* ===== Miniaturas: todos os ambientes / comparar tamanhos ===== */
+let timerGrade;
+function agendarGrade() { clearTimeout(timerGrade); timerGrade = setTimeout(renderGrade, 250); }
+
+function itensGrade() {
+  if (est.grade === "amb") return [
+    ...(est.parede ? [{ amb: "parede", w: est.w, h: est.h, nome: "Minha parede" }] : []),
+    ...AMBIENTES.map((a) => ({ amb: a.id, w: est.w, h: est.h, nome: a.nome })),
+  ];
+  // comparar tamanhos: mesma orientação da obra atual
+  const vertical = est.h >= est.w;
+  const amb = est.modo === "par" && est.parede ? "parede" : est.ambiente;
+  return TAMANHOS.map(([a, b]) => (a === b ? [a, b] : vertical ? [a, b] : [b, a]))
+    .map(([w, h]) => ({ amb, w, h, nome: `${w} × ${h} cm` }));
+}
+
+function desenharItem(cv, it, comRodape) {
+  if (it.amb === "parede") {
+    const [W, H] = tamanhoCanvasParede(); const f = cv.width / W; cv.height = Math.round(H * f);
+    const salvo = [est.w, est.h, est.pxCm]; est.w = it.w; est.h = it.h; est.pxCm *= f;
+    renderParede(cv, comRodape, false); // desenha em escala menor
+    [est.w, est.h, est.pxCm] = salvo;
+  } else {
+    const salvo = [est.w, est.h]; est.w = it.w; est.h = it.h;
+    renderAmbiente(cv, it.amb, it.w, it.h, comRodape);
+    [est.w, est.h] = salvo;
+  }
+}
+
+function renderGrade() {
+  const grade = $("grade"); grade.innerHTML = "";
+  const f = FORMATOS.find((q) => q.id === est.formato);
+  itensGrade().forEach((it) => {
+    const fig = document.createElement("figure"); const cv = document.createElement("canvas");
+    cv.width = 560; cv.height = Math.round(560 * f.h / f.w);
+    desenharItem(cv, it, false);
+    const cap = document.createElement("figcaption"); cap.textContent = it.nome;
+    fig.append(cv, cap); grade.append(fig);
+    fig.onclick = () => {
+      if (est.grade === "amb" && it.amb === "parede") { est.modo = "par"; trocarAba(); }
+      else if (est.grade === "amb") { est.ambiente = it.amb; est.padrao = it.amb.split("-")[0]; est.desloc = { x: 0, y: 0 }; est.modo = "amb"; trocarAba(); }
+      else { est.w = it.w; est.h = it.h; }
+      montarChips(); render(); $("palco").scrollIntoView({ behavior: "smooth" });
+    };
+  });
+}
+
+/* =========================================================
+   Download
+   ========================================================= */
+async function baixarCanvas(cv, nome) {
+  // no link publicado, o download passa pela confirmação do Claude
+  const dl = window.claude?.use ? await window.claude.use("downloads") : null;
+  if (dl) {
+    const blob = await new Promise((ok) => cv.toBlob(ok, "image/jpeg", .92));
+    try { await dl.save({ filename: nome, data: blob }); return true; }
+    catch (e) { return e.code !== "declined" ? (aviso("Não foi possível baixar aqui. Tente de novo em instantes."), false) : false; }
+  }
+  const a = document.createElement("a");
+  a.download = nome; a.href = cv.toDataURL("image/jpeg", .92); document.body.append(a); a.click(); a.remove();
+  return true;
+}
+function aviso(txt) { const p = $("avisoDl"); p.textContent = txt; p.classList.remove("oculto"); setTimeout(() => p.classList.add("oculto"), 5000); }
+const slug = (t) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+function nomeArquivo(extra) {
+  const obra = $("nomeObra").value.trim();
+  return `silvia-porto-${obra ? slug(obra) + "-" : ""}${slug(extra)}-${est.w}x${est.h}.jpg`;
+}
+
+$("baixar").onclick = async () => {
+  const amb = est.modo === "par" && est.parede ? "minha-parede" : AMBIENTES.find((a) => a.id === est.ambiente).nome;
+  if (est.modo === "par" && est.parede) { const cv = document.createElement("canvas"); [cv.width, cv.height] = tamanhoCanvasParede(); renderParede(cv, true, false); await baixarCanvas(cv, nomeArquivo(amb)); }
+  else baixarCanvas(tela, nomeArquivo(amb));
+};
+
+$("baixarTodas").onclick = async () => {
+  const f = FORMATOS.find((q) => q.id === est.formato);
+  for (const it of itensGrade()) {
+    const cv = document.createElement("canvas");
+    if (it.amb === "parede") { [cv.width, cv.height] = tamanhoCanvasParede(); } else { cv.width = f.w; cv.height = f.h; }
+    const salvoW = [est.w, est.h]; est.w = it.w; est.h = it.h;
+    if (it.amb === "parede") renderParede(cv, true, false); else renderAmbiente(cv, it.amb, it.w, it.h, true);
+    const nome = nomeArquivo(it.amb === "parede" ? "minha-parede" : AMBIENTES.find((a) => a.id === it.amb).nome);
+    [est.w, est.h] = salvoW;
+    if (!(await baixarCanvas(cv, nome))) break; // parou se a pessoa recusou
+    await new Promise((r) => setTimeout(r, 450)); // pausa para o navegador aceitar vários downloads
+  }
+};
+
+/* ===== WhatsApp ===== */
+function atualizarWhats() {
+  const m = MOLDURAS.find((q) => q.id === est.moldura).nome;
+  const onde = est.modo === "par" && est.parede ? "na foto da minha parede" : `no ambiente ${AMBIENTES.find((a) => a.id === est.ambiente).nome}`;
+  const obra = $("nomeObra").value.trim();
+  const msg = [`${SAUDACAO} Fiz a simulação do quadro ${onde}.`, obra ? `Obra: ${obra}` : "", `Tamanho: ${medidaTxt() || "a definir"}`, `Acabamento: ${m}`, "", "Vou te enviar a imagem da simulação. Pode me passar o valor e o prazo?"]
+    .filter((l, i) => l || i === 4).join("\n");
+  $("whats").href = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
+}
+
+/* =========================================================
+   Arrastar o quadro / medir na foto
+   ========================================================= */
+let arrasto = null;
+function pontoCanvas(ev) {
+  const r = tela.getBoundingClientRect();
+  // o canvas usa object-fit: contain — calcula a área real da imagem
+  const esc = Math.min(r.width / tela.width, r.height / tela.height);
+  const ox = r.left + (r.width - tela.width * esc) / 2, oy = r.top + (r.height - tela.height * esc) / 2;
+  return [(ev.clientX - ox) / esc, (ev.clientY - oy) / esc];
+}
+tela.addEventListener("pointerdown", (ev) => {
+  const [x, y] = pontoCanvas(ev);
+  if (est.modo === "par" && est.parede && est.calib && est.calib.pts.length < 2) {
+    est.calib.pts.push([x, y]); render(); mostrarCalib(); return;
+  }
+  tela.setPointerCapture(ev.pointerId);
+  arrasto = { x, y, desloc: { ...est.desloc }, pos: { ...est.pos } };
+});
+tela.addEventListener("pointermove", (ev) => {
+  if (!arrasto) return;
+  const [x, y] = pontoCanvas(ev); const dx = x - arrasto.x, dy = y - arrasto.y;
+  if (est.modo === "par" && est.parede) { est.pos = { x: arrasto.pos.x + dx / tela.width, y: arrasto.pos.y + dy / tela.height }; }
+  else if (camAtual) { est.desloc = { x: arrasto.desloc.x + dx / camAtual.s, y: arrasto.desloc.y - dy / camAtual.s }; }
+  pedirRender();
+});
+tela.addEventListener("pointerup", () => (arrasto = null));
+tela.addEventListener("pointercancel", () => (arrasto = null));
+
+function mostrarCalib() {
+  const box = $("calibBox"); box.classList.remove("oculto");
+  const n = est.calib.pts.length;
+  if (n < 2) { box.innerHTML = `Toque nas <b>duas pontas</b> de algo que você sabe a medida (${n}/2).<br><span class="mini">Ex.: largura de uma porta ≈ 80 cm, tomada ≈ 8 cm, folha A4 = 29,7 cm, sofá, cômoda…</span><br><button class="btn sec" id="calCancel" style="margin-top:6px">Cancelar</button>`; }
+  else box.innerHTML = `Quantos centímetros tem essa medida?<div class="linha" style="margin-top:6px"><input id="calCm" type="number" value="80" min="1"> cm <button class="btn" id="calOk">Confirmar</button><button class="btn sec" id="calCancel">Cancelar</button></div>`;
+  $("calCancel").onclick = () => { est.calib = null; box.classList.add("oculto"); render(); };
+  if ($("calOk")) $("calOk").onclick = () => {
+    const cm = parseFloat($("calCm").value); if (!(cm > 0)) return;
+    const [[x1, y1], [x2, y2]] = est.calib.pts;
+    est.pxCm = Math.hypot(x2 - x1, y2 - y1) / cm; est.mult = 1; est.calibrado = true; est.calib = null;
+    $("mult").value = 100; $("multTxt").textContent = "100% (tamanho real)";
+    box.innerHTML = "✅ Medida calibrada! Agora o quadro aparece no tamanho real escolhido."; render();
+  };
+}
+$("calibrar").onclick = () => { if (!est.parede) { $("calibBox").classList.remove("oculto"); $("calibBox").textContent = "Envie primeiro a foto da parede."; return; } est.calib = { pts: [] }; mostrarCalib(); render(); };
+$("centralizar").onclick = () => { est.pos = { x: .5, y: .42 }; render(); };
+$("mult").oninput = (e) => { est.mult = e.target.value / 100; $("multTxt").textContent = e.target.value + "%" + (est.calibrado && e.target.value == 100 ? " (tamanho real)" : ""); pedirRender(); };
+$("luz").oninput = (e) => { est.luz = e.target.value / 100; pedirRender(); };
+
+/* =========================================================
+   Carregar imagens
+   ========================================================= */
+// fotos de celular têm 12 MP ou mais: reduz uma vez só, para arrastar o quadro sem travar
+function reduzirImagem(img, max) {
+  const iw = img.naturalWidth, ih = img.naturalHeight, f = Math.min(1, max / Math.max(iw, ih));
+  if (f === 1) return Promise.resolve(img);
+  const cv = document.createElement("canvas"); cv.width = Math.round(iw * f); cv.height = Math.round(ih * f);
+  cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+  let url; try { url = cv.toDataURL("image/jpeg", .9); } catch (e) { return Promise.resolve(img); } // imagem de outro site: usa a original
+  return new Promise((ok) => { const r = new Image(); r.onload = () => ok(r); r.onerror = () => ok(img); r.src = url; });
+}
+function lerImagem(arquivo, max) {
+  return new Promise((ok, erro) => {
+    const url = URL.createObjectURL(arquivo), img = new Image();
+    img.onload = () => { reduzirImagem(img, max).then((r) => { if (r !== img) URL.revokeObjectURL(url); ok(r); }); };
+    img.onerror = erro; img.src = url;
+  });
+}
+// redesenha no máximo uma vez por quadro de tela (arrastar e controles deslizantes)
+let quadroPedido = 0;
+function pedirRender() { if (!quadroPedido) quadroPedido = requestAnimationFrame(() => { quadroPedido = 0; render(); }); }
+// escolhe o tamanho mais próximo da proporção da obra e redesenha
+function usarObra(img, nome) {
+  est.arte = img; $("thumbArte").src = img.src;
+  if (nome) $("nomeObra").value = nome;
+  const prop = img.naturalWidth / img.naturalHeight; let melhor = null, dif = 9;
+  TAMANHOS.forEach(([a, b]) => [[a, b], [b, a]].forEach(([w, h]) => { const d = Math.abs(w / h - prop); if (d < dif && w * h >= 4000) { dif = d; melhor = [w, h]; } }));
+  if (!est.digitado) [est.w, est.h] = melhor;
+  est.desloc = { x: 0, y: 0 }; montarChips(); render();
+}
+$("arqArte").onchange = async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  usarObra(await lerImagem(f, 1600));
+};
+
+// Obra escolhida na galeria da página (mensagem da página que contém esta ferramenta, ou ?obra=endereço)
+function carregarObraUrl(src, nome) {
+  const img = new Image();
+  img.crossOrigin = "anonymous"; // permite baixar a simulação (as fotos do site e do Google aceitam)
+  img.onload = async () => usarObra(await reduzirImagem(img, 1600), nome);
+  img.src = src;
+}
+window.addEventListener("message", (e) => {
+  if (e.origin !== location.origin || !e.data) return;
+  if (e.data.sp === "obra") carregarObraUrl(e.data.src, e.data.nome);
+  if (e.data.sp === "pai") document.documentElement.style.setProperty("--alto-pai", e.data.alto + "px"); // altura útil da tela do site
+});
+// dentro da página do site: avisa a altura do conteúdo, para a página ajustar a janela (sem rolagem dentro de rolagem)
+const EMBUTIDO = document.documentElement.classList.contains("embutido");
+if (EMBUTIDO && window.ResizeObserver) {
+  new ResizeObserver(() => parent.postMessage({ sp: "altura", h: Math.ceil(document.body.getBoundingClientRect().height) }, location.origin)).observe(document.body);
+}
+// leva a prévia para o alto da tela (na página do site, quem rola é a página, descontando o menu fixo)
+function mostrarPalco() {
+  if (EMBUTIDO) parent.postMessage({ sp: "rolar", y: Math.round($("palco").getBoundingClientRect().top + scrollY) }, location.origin);
+  else $("palco").scrollIntoView({ behavior: "smooth" });
+}
+async function receberParede(e) {
+  const f = e.target.files[0]; if (!f) return;
+  est.parede = await lerImagem(f, 1800); est.calibrado = false; est.modo = "par"; trocarAba();
+  $("atalhoTxt").textContent = "Trocar a foto da minha parede";
+  const [W] = tamanhoCanvasParede(); est.pxCm = W / 320; est.mult = 1; $("mult").value = 100; $("multTxt").textContent = "100%";
+  est.pos = { x: .5, y: .42 }; render();
+  mostrarPalco();
+}
+$("arqParede").onchange = receberParede; $("arqParede2").onchange = receberParede;
+
+/* =========================================================
+   Montagem dos botões
+   ========================================================= */
+function chips(el, itens, ativo, onClick) {
+  el.innerHTML = "";
+  itens.forEach((it) => { const b = document.createElement("button"); b.className = "chip" + (it.id === ativo ? " on" : ""); b.textContent = it.nome; b.onclick = () => onClick(it); el.append(b); });
+}
+function montarChips() {
+  chips($("telas"), TELAS, est.paineis, (t) => { est.paineis = t.id; montarChips(); render(); });
+  $("larg").value = est.digitado ? est.w : ""; $("alt").value = est.digitado ? est.h : "";
+  $("infoTelas").textContent = infoTelas();
+  chips($("molduras"), MOLDURAS, est.moldura, (m) => { est.moldura = m.id; montarChips(); render(); });
+  chips($("padroes"), PADROES, est.padrao, (p) => { est.padrao = p.id; est.ambiente = `${p.id}-${est.ambiente.split("-")[1]}`; est.desloc = { x: 0, y: 0 }; montarChips(); render(); });
+  chips($("ambientes"), COMODOS, est.ambiente.split("-")[1], (c) => { est.ambiente = `${est.padrao}-${c.id}`; est.desloc = { x: 0, y: 0 }; montarChips(); render(); });
+  chips($("formatos"), FORMATOS, est.formato, (f) => { est.formato = f.id; montarChips(); render(); });
+}
+function tamanhoManual() { const w = +$("larg").value, h = +$("alt").value; if (w >= 10 && h >= 10) { est.w = w; est.h = h; est.digitado = true; montarChips(); render(); } }
+$("larg").onchange = tamanhoManual; $("alt").onchange = tamanhoManual;
+// uma foto só na página da Silvia: esconde a escolha de padrão e de cômodo
+// e a grade de baixo (repetiria a mesma foto)
+if (MODO_SILVIA) [$("padroes"), $("ambientes"), $("ambientes").previousElementSibling, $("secGrade")].forEach((el) => { el.style.display = "none"; });
+$("nomeObra").oninput = render; $("mostraMedida").onchange = render;
+
+function trocarAba() {
+  $("abaAmb").classList.toggle("on", est.modo === "amb"); $("abaPar").classList.toggle("on", est.modo === "par");
+  $("boxAmb").classList.toggle("oculto", est.modo !== "amb"); $("boxPar").classList.toggle("oculto", est.modo !== "par");
+  // home da Silvia: o cartão "5 · Onde ver" só aparece quando a pessoa usa a foto da própria parede (para ajustar e medir)
+  if (MODO_SILVIA) $("abaAmb").closest(".card").style.display = est.modo === "par" ? "" : "none";
+}
+$("abaAmb").onclick = () => { est.modo = "amb"; trocarAba(); render(); };
+$("abaPar").onclick = () => { est.modo = "par"; trocarAba(); render(); };
+$("gAmb").onclick = () => { est.grade = "amb"; $("gAmb").classList.add("on"); $("gTam").classList.remove("on"); renderGrade(); };
+$("gTam").onclick = () => { est.grade = "tam"; $("gTam").classList.add("on"); $("gAmb").classList.remove("on"); renderGrade(); };
+
+/* ===== Início ===== */
+est.arte = arteExemplo(); $("thumbArte").src = est.arte.toDataURL();
+// dentro de outra página, no celular: formato vertical 4:5, para a imagem ocupar mais a tela
+if (document.documentElement.classList.contains("embutido") && innerWidth < 600) est.formato = "retrato";
+montarChips(); trocarAba(); render();
+if (PARAMS.get("obra")) carregarObraUrl(PARAMS.get("obra"), PARAMS.get("nome") || "");
+// home da Silvia: começa com "Mar e falésia" (branco e azul do mar, combina com o salão de mármore);
+// se o site mandar outra obra antes de carregar, vale a do site
+else if (MODO_SILVIA) {
+  let siteMandou = false;
+  window.addEventListener("message", (e) => { if (e.origin === location.origin && e.data && e.data.sp === "obra") siteMandou = true; });
+  const img = new Image();
+  // exemplo: 80% da largura da parede entre as colunas (~380 cm) = 304 × 225 cm em 4 telas de 70 cm, até a pessoa digitar o tamanho
+  img.onload = () => { if (!siteMandou) { usarObra(img, "Mar e falésia"); if (!est.digitado) { [est.w, est.h] = [304, 225]; est.paineis = 4; montarChips(); render(); } } };
+  img.src = "/wp-content/uploads/2026/09/quadros-decorativos-pintados-a-mao-015.jpg";
+}
+</script>
+</body>
+</html>
